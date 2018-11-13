@@ -1,0 +1,997 @@
+<html>
+<head>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+  <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+  <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Team Up</title>
+  <style type="text/css" media="screen">
+  html, body {
+    margin: 0;
+    height: 100%;
+  }
+  .wrapper {
+    min-height: 100%;
+
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    align-content: flex-start;
+  }
+  .wrapper > * {
+    flex: 1 100%;
+  }
+  .banner {
+    border-bottom-color: black;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    height: 74;
+    list-style: none;
+    margin: 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -webkit-flex-flow: row wrap;
+    justify-content: flex-end;
+  }
+  .banner a {
+    text-decoration: none;
+    display: block;
+    color: black;
+  }
+  .banner a:hover {
+    background: skyblue;
+  }
+  .banner li a {
+    border: none;
+  }
+  .banner p {
+    left: 20px;
+    position: absolute;
+    font-size: 30px;
+  }
+  /*.banner-content {
+    font-weight: bold;
+    font-size: 30;
+    color: #002868;
+    font-family: "Arial Rounded MT Bold";
+    text-align: left;
+  }*/
+  .content {
+    flex: 1;
+    border-right-width: thin;
+    border-right-color: black;
+    border-right-style: solid;
+    min-height: 100%;
+  }
+  .input-pane {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    padding: 10px;
+    align-items: center;
+  }
+  .input-form {
+    font-size: 20px;
+    margin: 10px;
+  }
+  .input-numteams {
+    text-align: center;
+  }
+  .northwestern {
+    display: block;
+    margin: auto;
+    width: 50%;
+    float: bottom;
+  }
+  .info {
+    font-size: 14px;
+  }
+  .run-teams {
+    align-self: center;
+  }
+  .results {
+    flex: 2;
+
+    /*display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;*/
+
+    /*-webkit-flex-flow: column;*/
+    /*justify-content: space-around;*/
+  }
+  .team {
+    border-color: black;
+    border-width: thin;
+    border-style: solid;
+    padding: 10px;
+    margin-left: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    -webkit-flex-flow: row;
+  }
+  .teammates {
+    flex: 1;
+
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -webkit-flex-flow: column wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    max-height: 300px;
+    position: relative;
+    left: 0px;
+  }
+  .team-results {
+    background-color: pink;
+    flex: 2;
+  }
+  .team-title {
+    left: 15px;
+    position: relative;
+    padding-top: 15px;
+    font-size: 20px;
+    padding-top: 10px;
+  }
+  .teammate {
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    flex: 1;
+    text-align: left;
+    padding: 5px;
+  }
+  .teammate:hover {
+    background-color: lavender;
+  }
+  .fa-mars {
+    color: skyblue;
+    font-weight: bold;
+  }
+  .fa-venus {
+    color: pink;
+    font-weight: bold;
+  }
+  .figure {
+    flex: 1;
+  }
+  .key-container{
+    margin: 5px;
+    flex: 1;
+    max-width: 150px;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    padding: 10px;
+    margin: auto;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -webkit-flex-flow: column wrap;
+    justify-content: center;
+    align-content: center;
+  }
+  .key-element {
+    flex: 1;
+    width: 120px;
+    font-size: 15px;
+    padding-left: 20px;
+    padding-right: 10px;
+    position: relative;
+  }
+  .color-circle {
+    flex: 1;
+    height: 14px;
+    width: 14px;
+    border-radius: 7px;
+    background-color: red;
+    position: absolute;
+    left: 0;
+  }
+  /*.data {
+    border: 1px solid black;
+    width: 100px;
+  }
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+  .bar {
+    fill: orange;
+  }
+  .solidArc:hover {
+    fill: orangered ;
+  }*/
+  /*.solidArc {
+      -moz-transition: all 0.3s;
+      -o-transition: all 0.3s;
+      -webkit-transition: all 0.3s;
+      transition: all 0.3s;
+  }*/
+  /*.x.axis path {
+    display: none;
+  }
+  .aster-score {
+    line-height: 1;
+    font-weight: bold;
+    font-size: 100%;
+  }
+  .d3-tip {
+    line-height: 1;
+    font-weight: bold;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 2px;
+  }*/
+  /* Creates a small triangle extender for the tooltip */
+  /*.d3-tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+  }*/
+  /* Style northward tooltips differently */
+  /*.d3-tip.n:after {
+    margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;
+  }*/
+
+   svg.team-graph {
+       width: 550px;
+       height: 300px;
+       position: center;
+   }
+
+   .toolTip {
+       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+       position: absolute;
+       display: none;
+       width: auto;
+       height: auto;
+       background: none repeat scroll 0 0 white;
+       border: 0 none;
+       border-radius: 8px 8px 8px 8px;
+       box-shadow: -3px 3px 15px #888888;
+       color: black;
+       font: 12px sans-serif;
+       padding: 5px;
+       text-align: center;
+   }
+
+   text {
+    font: 10px sans-serif;
+    color: white;
+   }
+
+   text.value {
+    font-weight: bold;
+    fill: black;
+   }
+
+   .axisHorizontal path{
+       fill: none;
+   }
+
+   .axisHorizontal .tick line {
+       stroke-width: 1;
+       stroke: rgba(0, 0, 0, 0.2);
+   }
+
+   .bar {
+       fill: steelblue;
+       /*fill-opacity: .9;*/
+   }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <ul class="banner">
+        <p>Team Up</p>
+    </ul>
+    <div class="content">
+      <div class="input-pane">
+        <script type="text/javascript">
+        $(function() {
+            $(".chzn-select").chosen();
+            var features = {{features|safe}}
+            $('.chzn-select').val(features);
+            $('.chzn-select').trigger("chosen:updated");
+
+            var numteams = {{request.args.get('numteams')}}
+            if (numteams){
+              $(".input-numteams").val(numteams);
+            }
+            else {
+              $(".input-numteams").val(1);
+            }
+
+        });
+        </script>
+
+        <form class="input-form" action="/" method="get">
+          Class Name:
+          <input type="text" name="classname" placeholder="Class Name"><br><br>
+          Number of Teams:
+          <input class = "input-numteams" type="number" name="numteams" id="numteams" min="1"><br><br>
+          Traits:
+          <select class="chzn-select" multiple="true" name="features" style="width:200px;" data-placeholder="Select Features">
+            <optgroup label="Needs">
+              <option value="need_challenge">Challenge</option>
+              <option value="need_closeness">Closeness</option>
+              <option value="need_curiosity">Curiosity</option>
+              <option value="need_excitement">Excitement</option>
+              <option value="need_harmony">Harmony</option>
+              <option value="need_ideal">Ideal</option>
+              <option value="need_liberty">Liberty</option>
+              <option value="need_love">Love</option>
+              <option value="need_practicality">Practicality</option>
+              <option value="need_self_expression">Self-expression</option>
+              <option value="need_stability">Stability</option>
+              <option value="need_structure">Structure</option>
+            </optgroup>
+            <optgroup label="Values">
+              <option value="value_conservation">Conservation</option>
+              <option value="value_openness_to_change">Openness to change</option>
+              <option value="value_hedonism">Hedonism</option>
+              <option value="value_self_enhancement">Self-enhancement</option>
+              <option value="value_self_transcendence">Self-transcendence</option>
+            </optgroup>
+            <optgroup label="Emotional Range">
+              <option value="facet_anger">Fiery</option>
+              <option style="color:red;" value="facet_anxiety">Prone to worry</option>
+              <option value="facet_depression">Melancholy</option>
+              <option value="facet_immoderation">Immoderation</option>
+              <option style="color:red;" value="facet_self_consciousness">Self-consciousness</option>
+              <option value="facet_vulnerability">Susceptible to stress</option>
+            </optgroup>
+            <optgroup label="Openness">
+              <option value="facet_adventurousness">Adventurousness</option>
+              <option value="facet_artistic_interests">Artistic interests</option>
+              <option style="color:red;" value="facet_emotionality">Emotionality</option>
+              <option style="color:red;" value="facet_imagination">Imagination</option>
+              <option value="facet_intellect">Intellect</option>
+              <option value="facet_liberalism">Authority-challenging</option>
+            </optgroup>
+            <optgroup label="Extraversion">
+              <option style="color:red;" value="facet_activity_level">Activity level</option>
+              <option style="color:red;" value="facet_assertiveness">Assertiveness</option>
+              <option value="facet_cheerfulness">Cheerfulness</option>
+              <option value="facet_excitement_seeking">Excitement-seeking</option>
+              <option value="facet_friendliness">Outgoing</option>
+              <option value="facet_gregariousness">Gregariousness</option>
+            </optgroup>
+            <optgroup label="Agreeableness">
+              <option style="color:red;" value="facet_altruism">Altruism</option>
+              <option style="color:red;" value="facet_cooperation">Cooperation</option>
+              <option value="facet_modesty">Modesty</option>
+              <option value="facet_morality">Uncompromising</option>
+              <option value="facet_sympathy">Sympathy</option>
+              <option value="facet_trust">Trust</option>
+            </optgroup>
+            <optgroup label="Conscientiousness">
+              <option style="color:red;" value="facet_achievement_striving">Achievement striving</option>
+              <option value="facet_cautiousness">Cautiousness</option>
+              <option value="facet_dutifulness">Dutifulness</option>
+              <option value="facet_orderliness">Orderliness</option>
+              <option style="color:red;" value="facet_self_discipline">Self-discipline</option>
+              <option value="facet_self_efficacy">Self-efficacy</option>
+            </optgroup>
+          </select><br><br>
+          <div class="info">
+            Research suggests that the most successful teams are typically those composed of individuals with varying traits.
+            Personality traits are broken up into five categories called the "Big Five." These are emotional range, openness, extraversion, agreeableness, and conscientiousness.
+            Teams made by balancing individuals with high scores for these traits will tend to be more successful, high-performing teams.
+            <br><br>
+            Traits in <span style="color:red;">red</span> have been shown to contribute to stronger teams.
+            <br><br>
+          </div>
+          <input class="run-teams" type="submit" name="run" value="Run">
+          <input class="run-teams" type="submit" name="run" value="Random">
+        </form>
+        <img class="northwestern" src="static/northwestern.png">
+        <!-- <div class="key-container">
+          <div class="key-element" id={{feature}}><div class="color-circle" style="background-color:#6F2DBD"></div>Needs</div>
+          <div class="key-element" id={{feature}}><div class="color-circle" style="background-color:#BF1A2F"></div>Values</div>
+          <div class="key-element" id={{feature}}><div class="color-circle" style="background-color:#F00699"></div>Emotional Range</div>
+          <div class="key-element" id={{feature}}><div class="color-circle" style="background-color:#018E42"></div>Openness</div>
+          <div class="key-element" id={{feature}}><div class="color-circle" style="background-color:#F7D002"></div>Extraversion</div>
+          <div class="key-element" id={{feature}}><div class="color-circle" style="background-color:#E86806"></div>Agreeableness</div>
+          <div class="key-element" id={{feature}}><div class="color-circle" style="background-color:#1E54C9"></div>Conscientiousness</div>
+        </div> -->
+      </div>
+    </div>
+    <div class="results">
+      {% for team in teams %}
+      {% set outer_loop = loop %}
+      {% if loop.index0 == 0 %}
+      <span class="team-title">Teams Summary</span>
+      <div id="summary" class="team">
+        <div class="figure"></div>
+      </div>
+      {% endif %}
+      <span class="team-title">Team {{loop.index}}</span>
+      <div id = "team{{loop.index0}}" class="team">
+        <div class="teammates">
+          {% for teammate in team %}
+            <div class="teammate" id="{{outer_loop.index0}}-{{loop.index0}}">{{teammate['name']}}
+              {% if teammate['gender'] == 'm' %}
+              <i class="fa fa-mars"></i>
+              {% else %}
+              <i class="fa fa-venus"></i>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="figure">
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <script>
+    // var traits_json = (function () {
+    //     var json = null;
+    //     $.ajax({
+    //         'async': false,
+    //         'global': false,
+    //         'url': 'http://localhost:5000/static/traits.json',
+    //         'dataType': "json",
+    //         'success': function (data) {
+    //             json = data;
+    //         }
+    //     });
+    //     return json;
+    // })();
+    var color_to_category = {
+      "#1E54C9": "Conscientiousness",
+      "#6F2DBD": "Needs",
+      "#F00699": "Emotional Range",
+      "#018E42": "Openness",
+      "#F7D002": "Extraversion",
+      "#BF1A2F": "Values",
+      "#E86806": "Agreeableness"
+    }
+    var traits_json = {
+      "facet_cautiousness": {
+        "color": "#1E54C9",
+        "label": "Cautiousness"
+      },
+      "facet_self_efficacy": {
+        "color": "#1E54C9",
+        "label": "Self-efficacy"
+      },
+      "need_liberty": {
+        "color": "#6F2DBD",
+        "label": "Liberty"
+      },
+      "facet_adventurousness": {
+        "color": "#018E42",
+        "label": "Adventurousness"
+      },
+      "need_challenge": {
+        "color": "#6F2DBD",
+        "label": "Challenge"
+      },
+      "facet_cooperation": {
+        "color": "#E86806",
+        "label": "Cooperation"
+      },
+      "facet_sympathy": {
+        "color": "#E86806",
+        "label": "Sympathy"
+      },
+      "facet_self_discipline": {
+        "color": "#1E54C9",
+        "label": "Self-discipline"
+      },
+      "need_harmony": {
+        "color": "#6F2DBD",
+        "label": "Harmony"
+      },
+      "facet_morality": {
+        "color": "#E86806",
+        "label": "Uncompromising"
+      },
+      "facet_liberalism": {
+        "color": "#018E42",
+        "label": "Authority-challenging"
+      },
+      "facet_altruism": {
+        "color": "#E86806",
+        "label": "Altruism"
+      },
+      "facet_friendliness": {
+        "color": "#F7D002",
+        "label": "Outgoing"
+      },
+      "need_love": {
+        "color": "#6F2DBD",
+        "label": "Love"
+      },
+      "facet_activity_level": {
+        "color": "#F7D002",
+        "label": "Activity level"
+      },
+      "facet_anxiety": {
+        "color": "#F00699",
+        "label": "Prone to worry"
+      },
+      "need_self_expression": {
+        "color": "#6F2DBD",
+        "label": "Self-expression"
+      },
+      "facet_emotionality": {
+        "color": "#018E42",
+        "label": "Emotionality"
+      },
+      "need_curiosity": {
+        "color": "#6F2DBD",
+        "label": "Curiosity"
+      },
+      "facet_vulnerability": {
+        "color": "#F00699",
+        "label": "Susceptible to stress"
+      },
+      "need_excitement": {
+        "color": "#6F2DBD",
+        "label": "Excitement"
+      },
+      "facet_excitement_seeking": {
+        "color": "#F7D002",
+        "label": "Excitement-seeking"
+      },
+      "facet_self_consciousness": {
+        "color": "#F00699",
+        "label": "Self-consciousness"
+      },
+      "facet_cheerfulness": {
+        "color": "#F7D002",
+        "label": "Cheerfulness"
+      },
+      "facet_depression": {
+        "color": "#F00699",
+        "label": "Melancholy"
+      },
+      "value_hedonism": {
+        "color": "#BF1A2F",
+        "label": "Hedonism"
+      },
+      "value_openness_to_change": {
+        "color": "#BF1A2F",
+        "label": "Openness to change"
+      },
+      "facet_imagination": {
+        "color": "#018E42",
+        "label": "Imagination"
+      },
+      "value_conservation": {
+        "color": "#BF1A2F",
+        "label": "Conservation"
+      },
+      "need_ideal": {
+        "color": "#6F2DBD",
+        "label": "Ideal"
+      },
+      "need_practicality": {
+        "color": "#6F2DBD",
+        "label": "Practicality"
+      },
+      "facet_trust": {
+        "color": "#E86806",
+        "label": "Trust"
+      },
+      "facet_anger": {
+        "color": "#F00699",
+        "label": "Fiery"
+      },
+      "facet_gregariousness": {
+        "color": "#F7D002",
+        "label": "Gregariousness"
+      },
+      "facet_artistic_interests": {
+        "color": "#018E42",
+        "label": "Artistic interests"
+      },
+      "facet_assertiveness": {
+        "color": "#F7D002",
+        "label": "Assertiveness"
+      },
+      "facet_intellect": {
+        "color": "#018E42",
+        "label": "Intellect"
+      },
+      "facet_immoderation": {
+        "color": "#F00699",
+        "label": "Immoderation"
+      },
+      "facet_orderliness": {
+        "color": "#1E54C9",
+        "label": "Orderliness"
+      },
+      "need_stability": {
+        "color": "#6F2DBD",
+        "label": "Stability"
+      },
+      "facet_modesty": {
+        "color": "#E86806",
+        "label": "Modesty"
+      },
+      "value_self_enhancement": {
+        "color": "#BF1A2F",
+        "label": "Self-enhancement"
+      },
+      "value_self_transcendence": {
+        "color": "#BF1A2F",
+        "label": "Self-transcendence"
+      },
+      "facet_achievement_striving": {
+        "color": "#1E54C9",
+        "label": "Achievement striving"
+      },
+      "facet_dutifulness": {
+        "color": "#1E54C9",
+        "label": "Dutifulness"
+      },
+      "need_structure": {
+        "color": "#6F2DBD",
+        "label": "Structure"
+      },
+      "need_closeness": {
+        "color": "#6F2DBD",
+        "label": "Closeness"
+      }
+    };
+    var teams = {{teams|tojson}}
+    var features = {{features|safe}}
+    var sum_data = [];
+    for (var i = 0; i < features.length; i++) {
+      sum_data.push({feat: traits_json[features[i]].label, values: []});
+    }
+    teams.forEach(function(team, team_idx) {
+      var data = [];
+
+      for (var feat_idx = 0; feat_idx < features.length; feat_idx++) {
+        var d = {};
+        var feat = features[feat_idx];
+        d.label = traits_json[feat].label;
+        d.color = traits_json[feat].color;
+        d.feat = feat;
+        d.weight = 1;
+        d.value = 0;
+        for (var p_idx = 0; p_idx < team.length; p_idx++) {
+          var p = team[p_idx];
+          // set value of arc to max value in team
+          if (p[feat] > d.value)
+            d.value = p[feat];
+        }
+
+        d.value = Math.round(d.value * 100);
+        data.push(d);
+        sum_data[feat_idx].values.push({'team_idx': team_idx, 'value': d.value});
+      }
+
+      var p_data = [];
+      for (var p_idx = 0; p_idx < team.length; p_idx++) {
+        var temp_data = [];
+        for (var feat_idx = 0; feat_idx < features.length; feat_idx++) {
+          var d = {}
+          var feat = features[feat_idx];
+          d.label = traits_json[feat].label;
+          d.color = traits_json[feat].color;
+          d.feat = feat;
+          d.weight = 1;
+          d.value = team[p_idx][feat];
+          d.value = Math.round(d.value * 100);
+          temp_data.push(d);
+        }
+        p_data.push(temp_data);
+      }
+
+      var div = d3.select("body").append("div").attr("class", "toolTip");
+
+      var axisMargin = 20,
+          margin = 10,
+          valueMargin = 4,
+          width = 400,
+          height = 300,
+          barHeight = (height-axisMargin-margin*2)* 0.4/data.length,
+          barPadding = (height-axisMargin-margin*2)*0.6/data.length,
+          data, bar, svg, scale, xAxis, labelWidth = 0;
+
+      max = 100;
+
+      svg = d3.selectAll("div.team#team"+team_idx).selectAll(".figure")
+       .append("svg")
+       .attr("class","team-graph")
+       .attr("width", width)
+       .attr("height", height);
+
+
+      bar = svg.selectAll("g")
+        .data(data)
+        .enter()
+        .append("g");
+
+      bar.attr("class", "bar")
+        .attr("id", function(d) { return d.feat+"-"+team_idx })
+        .attr("cx",0)
+        .attr("transform", function(d, i) {
+            return "translate(" + margin + "," + (i * (barHeight + barPadding) + barPadding) + ")";
+        });
+
+      bar.append("text")
+        .attr("class", "label")
+        .attr("y", barHeight / 2)
+        .attr("dy", ".35em") //vertical align middle
+        .attr("dx", -5)
+        .attr("fill", function(d) { return d.color })
+        .text(function(d){
+            return d.label;
+        }).each(function() {
+            labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
+          });
+
+      var categories_used = [];
+      bar.append("text")
+        .attr("class", "category")
+        .attr("y", barHeight / 2)
+        .attr("dy", ".35em") //vertical align middle
+        .attr("dx", 430)
+        .style("font-weight", "bold")
+        .attr("fill", function(d) { return d.color })
+        .text(function(d){
+            var category = color_to_category[d.color];
+            if (categories_used.indexOf(category) == -1) {
+              categories_used.push(category)
+              return category;
+            }
+            else {
+              return "";
+            }
+        }).each(function() {
+            labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
+          });
+
+      scale = d3.scale.linear()
+        .domain([0, max])
+        .range([0, width - margin*2 - labelWidth]);
+
+      xAxis = d3.svg.axis()
+        .scale(scale)
+        .tickSize(-height + 2*margin + axisMargin)
+        .orient("bottom");
+
+      for (var p_idx = 0; p_idx < p_data.length; p_idx++) {
+        var p = p_data[p_idx];
+        for (var i = 0; i < p.length; i++) {
+          var feat = p[i].feat;
+          var value = p[i].value;
+          d3.selectAll("#"+feat+"-"+team_idx)
+            .append("rect")
+            .attr("id", feat+"-"+team_idx+"-"+p_idx)
+            .attr("transform", "translate("+labelWidth+", 0)")
+            .attr("fill", "transparent")
+            .attr("height", barHeight)
+            .attr("width", function(d){
+                 return scale(value);
+          });
+        }
+
+        $("#"+team_idx+"-"+p_idx).mouseover(function(e){
+            var split = this.id.split("-");
+            var team_idx = split[0];
+            var p_idx = split[1];
+            for (var f_idx = 0; f_idx < features.length; f_idx++) {
+              var feat = features[f_idx];
+              $("#"+feat+"-"+team_idx+"-"+p_idx).attr({'stroke':'white', 'fill':"black"})
+            }
+          });
+
+        $("#"+team_idx+"-"+p_idx).mouseout(function(e){
+            var split = this.id.split("-");
+            var team_idx = split[0];
+            var p_idx = split[1];
+            for (var f_idx = 0; f_idx < features.length; f_idx++) {
+              var feat = features[f_idx];
+              $("#"+feat+"-"+team_idx+"-"+p_idx).attr({'stroke':'transparent', 'fill':'transparent'})
+            }
+        });
+      }
+
+      bar.insert("rect",":first-child")
+        .attr("transform", "translate("+labelWidth+", 0)")
+        .attr("fill", function(d) { return d.color })
+        .attr("height", barHeight)
+        .attr("width", function(d){
+             return scale(d.value);
+      });
+
+      bar.append("text")
+        .attr("class", "value")
+        .attr("y", barHeight / 2)
+        .attr("dx", -valueMargin + labelWidth + 25) //margin right
+        .attr("dy", ".35em") //vertical align middle
+        .attr("text-anchor", "end")
+        .text(function(d){
+           return (d.value);
+        })
+        .attr("x", function(d){
+           var width = this.getBBox().width;
+           return Math.max(width + valueMargin, scale(d.value));
+        });
+
+      bar.on("mousemove", function(d){
+           div.style("left", d3.event.pageX+10+"px");
+           div.style("top", d3.event.pageY-25+"px");
+           div.style("display", "inline-block");
+           div.html((d.label)+"<br>"+(d.value));
+      });
+
+      bar.on("mouseout", function(d){
+           div.style("display", "none");
+      });
+
+      svg.insert("g",":first-child")
+        .attr("class", "axisHorizontal")
+        .attr("transform", "translate(" + (margin + labelWidth) + ","+ (height - axisMargin - margin)+")")
+        .call(xAxis);
+      });
+
+
+      // Team Summary
+    var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 1000 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+    var x0 = d3.scale.ordinal()
+        .rangeRoundBands([0, width], .1);
+
+    var x1 = d3.scale.ordinal();
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x0)
+        .tickSize(0)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
+
+    var color = d3.scale.category20();
+
+    var svg = d3.select('div#summary').selectAll(".figure").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var teamNumbers = Object.keys(teams);
+    var featureNames = sum_data.map(function(d) { return d.feat });
+
+    x0.domain(featureNames);
+    x1.domain(teamNumbers).rangeRoundBands([0, x0.rangeBand()]);
+    y.domain([0, 100]);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+
+    svg.selectAll(".tick").selectAll("text")
+    .style({"fill":function(d) {
+      for (var i = 0; i < Object.keys(traits_json).length; i++)
+        {
+          var k = Object.keys(traits_json)[i];
+          if(d == traits_json[k].label) {
+            return traits_json[k].color;
+          }
+        }
+      },
+      "font-size": "10px",
+      "font-weight": "bold"});
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .style('opacity','0')
+        .call(yAxis)
+    .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .style('font-weight','bold')
+        .text("Score");
+
+    svg.select('.y').transition().duration(500).delay(1300).style('opacity','1');
+
+    var slice = svg.selectAll(".slice")
+        .data(sum_data)
+        .enter().append("g")
+        .attr("class", "g")
+        .attr("transform",function(d) { return "translate(" + x0(d.feat) + ",0)"; });
+
+    slice.selectAll("rect")
+        .data(function(d) { return d.values; })
+    .enter().append("rect")
+        .attr("width", x1.rangeBand())
+        .attr("x", function(d) { return x1(d.team_idx); })
+        .style("fill", function(d) { return color(d.team_idx) })
+        .attr("y", function(d) { return y(0); })
+        .attr("height", function(d) { return height - y(0); })
+        .on("mouseover", function(d) {
+            d3.select(this).style("fill", d3.rgb(color(d.team_idx)).darker(2));
+        })
+        .on("mouseout", function(d) {
+            d3.select(this).style("fill", color(d.team_idx));
+        });
+
+    slice.selectAll("rect")
+        .transition()
+        .delay(function (d) {return Math.random()*1000;})
+        .duration(1000)
+        .attr("y", function(d) { return y(d.value); })
+        .attr("height", function(d) { return height - y(d.value); });
+
+    //Legend
+    var legend = svg.selectAll(".legend")
+        .data(sum_data[0].values.map(function(d) { console.log(d); return d; }).reverse())
+    .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d,i) { return "translate(0," + i * 20 + ")"; })
+        .style("opacity","0");
+
+    legend.append("rect")
+        .attr("x", width)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", function(d) { return color(d.team_idx); });
+
+    legend.append("text")
+        .attr("x", width + 12)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function(d) { console.log(d); return d.team_idx + 1; });
+
+    legend.transition().duration(500).delay(function(d,i){ return 1300 + 100 * i; }).style("opacity","1");
+    </script>
+
+    <script>
+    $(document).ready(function() {
+      $('.chosen-container').css("width", "400px");
+    })
+    </script>
+</body>
+</html>
